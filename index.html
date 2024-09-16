@@ -26,8 +26,8 @@
             border: 1px solid #000;
             padding: 5px;
             text-align: center;
-            word-wrap: break-word;
             vertical-align: middle;
+            word-wrap: break-word;
         }
         th[contenteditable="true"]:focus, td[contenteditable="true"]:focus {
             outline: 2px solid blue;
@@ -78,6 +78,9 @@
             writing-mode: vertical-lr;
             white-space: nowrap;
             height: 150px;
+        }
+        .sep-averages-cell {
+            font-weight: bold;
         }
     </style>
 </head>
@@ -171,6 +174,7 @@
 
             // Add SEP average cell
             const sepCell = document.createElement('td');
+            sepCell.className = 'sep-averages-cell';
             sepCell.textContent = 'N/A';
             sepCell.dataset.studentIndex = studentIndex;
             sepAverageRow.appendChild(sepCell);
