@@ -1,232 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Flipped Assignment Spreadsheet</title>
-<style>
-body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-}
-h1 {
-    text-align: center;
-}
-#controls {
-    margin-bottom: 20px;
-    text-align: center;
-}
-#controls button {
-    margin: 5px;
-}
-table {
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: auto;
-}
-th, td {
-    border: 1px solid #000;
-    padding: 5px;
-    text-align: center;
-    vertical-align: middle;
-    word-wrap: break-word;
-}
-th[contenteditable="true"]:focus, td[contenteditable="true"]:focus {
-    outline: 2px solid blue;
-}
-.score-select, .skill-select {
-    width: 100%;
-    padding: 2px;
-    color: #000;
-    font-weight: bold;
-    border: none;
-    outline: none;
-    appearance: none;
-}
-.score-4 {
-    background-color: #00c5ff;
-}
-.score-3 {
-    background-color: #00ff04;
-}
-.score-2 {
-    background-color: #fdff00;
-}
-.score-1 {
-    background-color: #ff1837;
-}
-.score-N {
-    background-color: #ff00a7;
-}
-.score-default {
-    background-color: #cccccc;
-}
-.chart-cell {
-    width: 150px;
-}
-#downloadBtn {
-    display: block;
-    margin: 20px auto;
-}
-.proficiency-cell {
-    font-weight: bold;
-    background-color: #f0f0f0;
-}
-.letter-grade {
-    font-weight: bold;
-}
-.rotate-header {
-    transform: rotate(-90deg);
-    writing-mode: vertical-lr;
-    white-space: nowrap;
-    height: 150px;
-}
-.sep-averages-row th {
-    text-align: left;
-}
-.sep-average {
-    font-weight: bold;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gradebook Summary</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-<h1>Flipped Assignment Spreadsheet</h1>
+    <h1>Gradebook Summary</h1>
 
-<div id="controls">
-    <button id="addStudentBtn">Add Student</button>
-    <button id="addAssessmentBtn">Add Assessment</button>
-    <button id="downloadBtn">Download PDF</button>
-</div>
-
-<table id="gradeTable">
-    <thead>
-        <!-- Corrected headers for assessment structure -->
-        <tr>
-            <th></th> <!-- Empty corner cell for alignment -->
-            <th>Assessment Name</th>
-            <th>Skill Name</th>
-            <th>% Proficient</th>
-            <th>Letter Grade</th>
-        </tr>
-        <tr id="studentRow">
-            <th></th> <!-- Empty corner cell for student names -->
-            <!-- Student names will be dynamically added here -->
-        </tr>
-    </thead>
-    <tbody>
-        <!-- SEP Averages Rows -->
-        <tr class="sep-averages-row" id="sep2AverageRow">
-            <th>SEP2 Avg</th>
-            <!-- SEP2 averages will be added here -->
-        </tr>
-        <tr class="sep-averages-row" id="sep4AverageRow">
-            <th>SEP4 Avg</th>
-            <!-- SEP4 averages will be added here -->
-        </tr>
-        <tr class="sep-averages-row" id="sep6AverageRow">
-            <th>SEP6 Avg</th>
-            <!-- SEP6 averages will be added here -->
-        </tr>
-        <!-- Assessment rows will be dynamically added here -->
-    </tbody>
-</table>
-
-<!-- Include Chart.js, ChartDataLabels, jsPDF, and html2canvas from CDN -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
-<script src="https://cdn.jsdelivr.net/npm/jspdf"></script>
-<script src="https://cdn.jsdelivr.net/npm/html2canvas"></script>
-
-<script>
-// Initialize variables
-const gradeTable = document.getElementById('gradeTable');
-const studentRow = document.getElementById('studentRow');
-const sep2AverageRow = document.getElementById('sep2AverageRow');
-const sep4AverageRow = document.getElementById('sep4AverageRow');
-const sep6AverageRow = document.getElementById('sep6AverageRow');
-let students = [];
-let assessments = [];
-
-// Function to initialize the table with 10 students and 10 assessments
-function initializeTable() {
-    for (let i = 1; i <= 10; i++) {
-        addStudent('Student ' + i);
-    }
-    for (let i = 0; i < 10; i++) {
-        addAssessment('Assessment ' + (i + 1));
-    }
-}
-
-// Function to add a new student
-document.getElementById('addStudentBtn').addEventListener('click', function() {
-    const studentNumber = students.length + 1;
-    addStudent('Student ' + studentNumber);
-});
-
-// Function to add a new assessment
-document.getElementById('addAssessmentBtn').addEventListener('click', function() {
-    const assessmentNumber = assessments.length + 1;
-    addAssessment('Assessment ' + assessmentNumber);
-});
-
-// Function to add a student
-function addStudent(studentName) {
-    const studentIndex = students.length;
-    students.push({ name: studentName });
-
-    // Add student name cell
-    const studentCell = document.createElement('th');
-    studentCell.contentEditable = true;
-    studentCell.textContent = studentName;
-    studentRow.appendChild(studentCell);
-
-    // Add SEP average cells
-    const sep2Cell = document.createElement('td');
-    sep2Cell.className = 'sep-average';
-    sep2Cell.textContent = 'N/A';
-    sep2AverageRow.appendChild(sep2Cell);
-
-    const sep4Cell = document.createElement('td');
-    sep4Cell.className = 'sep-average';
-    sep4Cell.textContent = 'N/A';
-    sep4AverageRow.appendChild(sep4Cell);
-
-    const sep6Cell = document.createElement('td');
-    sep6Cell.className = 'sep-average';
-    sep6Cell.textContent = 'N/A';
-    sep6AverageRow.appendChild(sep6Cell);
-}
-
-// Function to add an assessment
-function addAssessment(assessmentName) {
-    const assessmentIndex = assessments.length;
-    assessments.push({ name: assessmentName, sep: 'SEP2' });
-
-    const row = document.createElement('tr');
-    row.dataset.assessmentIndex = assessmentIndex;
-
-    // Add assessment name cell
-    const assessmentCell = document.createElement('td');
-    assessmentCell.contentEditable = true;
-    assessmentCell.textContent = assessmentName;
-    row.appendChild(assessmentCell);
-
-    // Add skill name cell
-    const skillCell = document.createElement('td');
-    skillCell.contentEditable = true;
-    skillCell.textContent = 'Skill ' + (assessmentIndex + 1);
-    row.appendChild(skillCell);
-
-    // Add proficiency percentage cell
-    const proficiencyCell = document.createElement('td');
-    proficiencyCell.className = 'proficiency-cell';
-    proficiencyCell.textContent = '0%';
-    row.appendChild(proficiencyCell);
-
-    // Placeholder for letter grades and student scores (to be added dynamically)
-    gradeTable.querySelector('tbody').appendChild(row);
-}
-
-// Initialize the table
-initializeTable();
-</script>
+    <table>
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Average Proficiency</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in data %}
+            <tr>
+                <td>{{ row['Student'] }}</td>
+                <td>{{ row['Average Proficiency'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </body>
 </html>
