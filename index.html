@@ -1,265 +1,527 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Flipped Assignment Spreadsheet</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        h1 {
-            text-align: center;
-        }
-        #controls {
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        #controls button {
-            margin: 5px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: auto;
-        }
-        th, td {
-            border: 1px solid #000;
-            padding: 5px;
-            text-align: center;
-            vertical-align: middle;
-            word-wrap: break-word;
-        }
-        th[contenteditable="true"]:focus, td[contenteditable="true"]:focus {
-            outline: 2px solid blue;
-        }
-        .score-select, .skill-select {
-            width: 100%;
-            padding: 2px;
-            color: #000;
-            font-weight: bold;
-            border: none;
-            outline: none;
-            appearance: none;
-        }
-        .score-4 {
-            background-color: #00c5ff;
-        }
-        .score-3 {
-            background-color: #00ff04;
-        }
-        .score-2 {
-            background-color: #fdff00;
-        }
-        .score-1 {
-            background-color: #ff1837;
-        }
-        .score-N {
-            background-color: #ff00a7;
-        }
-        .score-default {
-            background-color: #cccccc;
-        }
-        .chart-cell {
-            width: 150px;
-        }
-        #downloadBtn {
-            display: block;
-            margin: 20px auto;
-        }
-        .proficiency-cell {
-            font-weight: bold;
-            background-color: #f0f0f0;
-        }
-        .letter-grade {
-            font-weight: bold;
-        }
-        .rotate-header {
-            transform: rotate(-90deg);
-            writing-mode: vertical-lr;
-            white-space: nowrap;
-            height: 150px;
-        }
-        .sep-averages-row th {
-            text-align: left;
-        }
-        .sep-average {
-            font-weight: bold;
-        }
-    </style>
+<title>Flipped Assignment Spreadsheet</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+h1 {
+    text-align: center;
+}
+#controls {
+    margin-bottom: 20px;
+    text-align: center;
+}
+#controls button {
+    margin: 5px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
+}
+th, td {
+    border: 1px solid #000;
+    padding: 5px;
+    text-align: center;
+    vertical-align: middle;
+    word-wrap: break-word;
+}
+th[contenteditable="true"]:focus, td[contenteditable="true"]:focus {
+    outline: 2px solid blue;
+}
+.score-select, .skill-select {
+    width: 100%;
+    padding: 2px;
+    color: #000;
+    font-weight: bold;
+    border: none;
+    outline: none;
+    appearance: none;
+}
+.score-4 {
+    background-color: #00c5ff;
+}
+.score-3 {
+    background-color: #00ff04;
+}
+.score-2 {
+    background-color: #fdff00;
+}
+.score-1 {
+    background-color: #ff1837;
+}
+.score-N {
+    background-color: #ff00a7;
+}
+.score-default {
+    background-color: #cccccc;
+}
+.chart-cell {
+    width: 150px;
+}
+#downloadBtn {
+    display: block;
+    margin: 20px auto;
+}
+.proficiency-cell {
+    font-weight: bold;
+    background-color: #f0f0f0;
+}
+.letter-grade {
+    font-weight: bold;
+}
+.rotate-header {
+    transform: rotate(-90deg);
+    writing-mode: vertical-lr;
+    white-space: nowrap;
+    height: 150px;
+}
+.sep-averages-row th {
+    text-align: left;
+}
+.sep-average {
+    font-weight: bold;
+}
+</style>
 </head>
 <body>
-    <h1>Flipped Assignment Spreadsheet</h1>
+<h1>Flipped Assignment Spreadsheet</h1>
 
-    <div id="controls">
-        <button id="addStudentBtn">Add Student</button>
-        <button id="addAssessmentBtn">Add Assessment</button>
-        <button id="downloadBtn">Download PDF</button>
-    </div>
+<div id="controls">
+    <button id="addStudentBtn">Add Student</button>
+    <button id="addAssessmentBtn">Add Assessment</button>
+    <button id="downloadBtn">Download PDF</button>
+</div>
 
-    <table id="gradeTable">
-        <thead>
-            <tr id="assessmentRow">
-                <th>Assessment Name</th>
-                <!-- Assessments will be added here -->
-            </tr>
-            <tr id="skillRow">
-                <th>Skill Name</th>
-                <!-- Skills will be added here -->
-            </tr>
-            <tr id="proficiencyRow">
-                <th>% Proficient</th>
-                <!-- Proficiency percentages will be added here -->
-            </tr>
-            <tr id="letterGradeRow">
-                <th>Letter Grade</th>
-                <!-- Letter grades will be added here -->
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Student rows will be added here -->
-        </tbody>
-    </table>
+<table id="gradeTable">
+    <thead>
+        <tr id="studentRow">
+            <th></th> <!-- Empty corner cell -->
+            <!-- Student names will be added here -->
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Letter Grade Row -->
+        <tr id="letterGradeRow">
+            <th>Letter Grade</th>
+            <!-- Letter grades will be added here -->
+        </tr>
+        <!-- SEP Averages Rows -->
+        <tr class="sep-averages-row" id="sep2AverageRow">
+            <th>SEP2 Avg</th>
+            <!-- SEP2 averages will be added here -->
+        </tr>
+        <tr class="sep-averages-row" id="sep4AverageRow">
+            <th>SEP4 Avg</th>
+            <!-- SEP4 averages will be added here -->
+        </tr>
+        <tr class="sep-averages-row" id="sep6AverageRow">
+            <th>SEP6 Avg</th>
+            <!-- SEP6 averages will be added here -->
+        </tr>
+        <!-- Assessment rows will be added here -->
+    </tbody>
+</table>
 
-    <!-- Include Chart.js and jsPDF from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jspdf"></script>
+    <!-- Include Chart.js, jsPDF, and html2canvas from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas"></script>
 
-    <script>
-        const gradeTable = document.getElementById('gradeTable');
-        const assessmentRow = document.getElementById('assessmentRow');
-        const skillRow = document.getElementById('skillRow');
-        const proficiencyRow = document.getElementById('proficiencyRow');
-        const letterGradeRow = document.getElementById('letterGradeRow');
-        let assessments = [];
-        let students = [];
+<script>
+// Initialize variables
+const gradeTable = document.getElementById('gradeTable');
+const studentRow = document.getElementById('studentRow');
+const letterGradeRow = document.getElementById('letterGradeRow');
+const sep2AverageRow = document.getElementById('sep2AverageRow');
+const sep4AverageRow = document.getElementById('sep4AverageRow');
+const sep6AverageRow = document.getElementById('sep6AverageRow');
+const tableBody = gradeTable.querySelector('tbody');
+let students = [];
+let assessments = [];
+const seps = ['SEP2', 'SEP4', 'SEP6'];
 
-        // Function to initialize the table with sample data
-        function initializeTable() {
-            for (let i = 1; i <= 10; i++) {
-                addStudent('Student ' + i);
+// Function to initialize the table with 10 students and 10 assessments
+function initializeTable() {
+    for (let i = 1; i <= 10; i++) {
+        addStudent('Student ' + i);
+    }
+    for (let i = 0; i < 10; i++) {
+        addAssessment('Assessment ' + (i + 1));
+    }
+}
+
+// Function to add a new student
+document.getElementById('addStudentBtn').addEventListener('click', function() {
+    const studentNumber = students.length + 1;
+    addStudent('Student ' + studentNumber);
+});
+
+// Function to add a new assessment
+document.getElementById('addAssessmentBtn').addEventListener('click', function() {
+    const assessmentNumber = assessments.length + 1;
+    addAssessment('Assessment ' + assessmentNumber);
+});
+
+// Function to add a student
+function addStudent(studentName) {
+    const studentIndex = students.length;
+    students.push({ name: studentName });
+
+    // Add student name cell
+    const studentCell = document.createElement('th');
+    studentCell.contentEditable = true;
+    studentCell.className = 'rotate-header';
+    studentCell.textContent = studentName;
+    studentCell.dataset.studentIndex = studentIndex;
+    studentRow.appendChild(studentCell);
+
+    // Add letter grade cell
+    const letterCell = document.createElement('td');
+    letterCell.className = 'letter-grade';
+    letterCell.textContent = 'N/A';
+    letterCell.dataset.studentIndex = studentIndex;
+    letterGradeRow.appendChild(letterCell);
+
+    // Add SEP average cells
+    const sep2Cell = document.createElement('td');
+    sep2Cell.className = 'sep-average';
+    sep2Cell.textContent = 'N/A';
+    sep2Cell.dataset.studentIndex = studentIndex;
+    sep2AverageRow.appendChild(sep2Cell);
+
+    const sep4Cell = document.createElement('td');
+    sep4Cell.className = 'sep-average';
+    sep4Cell.textContent = 'N/A';
+    sep4Cell.dataset.studentIndex = studentIndex;
+    sep4AverageRow.appendChild(sep4Cell);
+
+    const sep6Cell = document.createElement('td');
+    sep6Cell.className = 'sep-average';
+    sep6Cell.textContent = 'N/A';
+    sep6Cell.dataset.studentIndex = studentIndex;
+    sep6AverageRow.appendChild(sep6Cell);
+
+    // Add score cells to existing assessment rows
+    const assessmentRows = tableBody.querySelectorAll('.assessment-row');
+    assessmentRows.forEach(row => {
+        const scoreCell = createScoreCell(studentIndex, row.dataset.assessmentIndex);
+        row.insertBefore(scoreCell, row.querySelector('.chart-cell')); // Insert before the chart cell
+    });
+
+    calculateSEPAverages();
+    calculateLetterGrades();
+}
+
+// Function to add an assessment
+function addAssessment(assessmentName) {
+    const assessmentIndex = assessments.length;
+    assessments.push({ name: assessmentName, sep: 'SEP2' });
+
+    const row = document.createElement('tr');
+    row.dataset.assessmentIndex = assessmentIndex;
+    row.className = 'assessment-row';
+
+    // Assessment name cell
+    const assessmentCell = document.createElement('td');
+    assessmentCell.contentEditable = true;
+    assessmentCell.textContent = assessmentName;
+    assessmentCell.dataset.assessmentIndex = assessmentIndex;
+    row.appendChild(assessmentCell);
+
+    // SEP selection cell
+    const sepCell = document.createElement('td');
+    const sepSelect = document.createElement('select');
+    sepSelect.className = 'skill-select';
+    seps.forEach(sep => {
+        const option = document.createElement('option');
+        option.value = sep;
+        option.textContent = sep;
+        sepSelect.appendChild(option);
+    });
+    sepSelect.addEventListener('change', function() {
+        assessments[assessmentIndex].sep = sepSelect.value;
+        calculateSEPAverages();
+        calculateLetterGrades();
+    });
+    sepCell.appendChild(sepSelect);
+    row.appendChild(sepCell);
+
+    // Proficiency percentage cell
+    const proficiencyCell = document.createElement('td');
+    proficiencyCell.className = 'proficiency-cell';
+    proficiencyCell.textContent = '0%';
+    row.appendChild(proficiencyCell);
+
+    // Score cells for each student
+    for (let i = 0; i < students.length; i++) {
+        const scoreCell = createScoreCell(i, assessmentIndex);
+        row.appendChild(scoreCell);
+    }
+
+    // Chart cell
+    const chartCell = document.createElement('td');
+    chartCell.className = 'chart-cell';
+    const canvas = document.createElement('canvas');
+    canvas.id = 'chart-' + assessmentIndex;
+    chartCell.appendChild(canvas);
+    row.appendChild(chartCell);
+
+    tableBody.appendChild(row);
+
+    // Create chart
+    createChart(assessmentIndex);
+
+    updateCharts();
+    updateProficiencyPercentages();
+}
+// Function to create score cell
+function createScoreCell(studentIndex, assessmentIndex) {
+    const scoreCell = document.createElement('td');
+
+    const select = document.createElement('select');
+    select.className = 'score-select score-default';
+    select.dataset.studentIndex = studentIndex;
+    select.dataset.assessmentIndex = assessmentIndex;
+    const scores = ['', 4, 3, 2, 1, 'N'];
+    scores.forEach(score => {
+        const option = document.createElement('option');
+        option.value = score;
+        option.text = score;
+        select.appendChild(option);
+    });
+
+    // Event listener to update calculations
+    select.addEventListener('change', function() {
+        updateCellColor(select);
+        updateCharts();
+        updateProficiencyPercentages();
+        calculateSEPAverages();
+        calculateLetterGrades();
+    });
+
+    scoreCell.appendChild(select);
+    updateCellColor(select);
+
+    return scoreCell;
+}
+
+// Function to update cell background color
+function updateCellColor(selectElement) {
+    const score = selectElement.value;
+    selectElement.className = 'score-select';
+    if (score === '') {
+        selectElement.classList.add('score-default');
+    } else {
+        selectElement.classList.add('score-' + score);
+    }
+}
+
+// Function to calculate SEP averages
+function calculateSEPAverages() {
+    students.forEach((student, studentIndex) => {
+        const sepSums = {'SEP2': 0, 'SEP4': 0, 'SEP6': 0};
+        const sepCounts = {'SEP2': 0, 'SEP4': 0, 'SEP6': 0};
+
+        assessments.forEach((assessment, assessmentIndex) => {
+            const select = document.querySelector(`.score-select[data-student-index="${studentIndex}"][data-assessment-index="${assessmentIndex}"]`);
+            const score = select.value;
+            if (score !== '' && score !== 'N') {
+                sepSums[assessment.sep] += parseFloat(score);
+                sepCounts[assessment.sep]++;
             }
-            for (let i = 0; i < 10; i++) {
-                addAssessment('Assessment ' + (i + 1), 'Skill ' + (i + 1));
+        });
+
+        // Update SEP averages
+        seps.forEach(sep => {
+            const sepAverageCell = document.querySelector(`#${sep.toLowerCase()}AverageRow td[data-student-index="${studentIndex}"]`);
+            if (sepCounts[sep] > 0) {
+                const average = (sepSums[sep] / sepCounts[sep]).toFixed(2);
+                sepAverageCell.textContent = average;
+                sepAverageCell.dataset.average = average;
+            } else {
+                sepAverageCell.textContent = 'N/A';
+                sepAverageCell.dataset.average = '';
             }
+        });
+    });
+}
+
+// Function to calculate letter grades
+function calculateLetterGrades() {
+    students.forEach((student, studentIndex) => {
+        const sepAverages = [];
+        seps.forEach(sep => {
+            const sepAverageCell = document.querySelector(`#${sep.toLowerCase()}AverageRow td[data-student-index="${studentIndex}"]`);
+            const avg = sepAverageCell.dataset.average;
+            if (avg) {
+                sepAverages.push(parseFloat(avg));
+            }
+        });
+
+        const letterGradeCell = letterGradeRow.querySelector(`td[data-student-index="${studentIndex}"]`);
+        if (sepAverages.length > 0) {
+            const overallAverage = sepAverages.reduce((a, b) => a + b, 0) / sepAverages.length;
+            let letterGrade = '';
+            if (overallAverage >= 3.5) {
+                letterGrade = 'A';
+            } else if (overallAverage >= 2.5) {
+                letterGrade = 'B';
+            } else if (overallAverage >= 1.5) {
+                letterGrade = 'C';
+            } else {
+                letterGrade = 'F';
+            }
+            letterGradeCell.textContent = letterGrade;
+        } else {
+            letterGradeCell.textContent = 'N/A';
         }
+    });
+}
 
-        // Function to add an assessment
-        function addAssessment(assessmentName, skillName) {
-            const assessmentIndex = assessments.length;
-            assessments.push({ name: assessmentName, skill: skillName });
+// Function to update proficiency percentages
+function updateProficiencyPercentages() {
+    assessments.forEach((assessment, assessmentIndex) => {
+        let total = 0;
+        let proficientCount = 0;
+        students.forEach((student, studentIndex) => {
+            const select = document.querySelector(`.score-select[data-student-index="${studentIndex}"][data-assessment-index="${assessmentIndex}"]`);
+            const score = select.value;
+            if (score !== '') {
+                total++;
+                if (score === '3' || score === '4') {
+                    proficientCount++;
+                }
+            }
+        });
+        const proficiencyPercentage = total > 0 ? ((proficientCount / total) * 100).toFixed(2) + '%' : '0%';
+        const row = tableBody.querySelector(`tr[data-assessment-index="${assessmentIndex}"]`);
+        const proficiencyCell = row.querySelector('.proficiency-cell');
+        proficiencyCell.textContent = proficiencyPercentage;
+    });
+}
 
-            // Add assessment name
-            const assessmentCell = document.createElement('th');
-            assessmentCell.contentEditable = true;
-            assessmentCell.textContent = assessmentName;
-            assessmentRow.appendChild(assessmentCell);
+// Function to create chart
+const charts = [];
 
-            // Add skill name
-            const skillCell = document.createElement('th');
-            skillCell.contentEditable = true;
-            skillCell.textContent = skillName;
-            skillRow.appendChild(skillCell);
-
-            // Add proficiency percentage
-            const proficiencyCell = document.createElement('td');
-            proficiencyCell.className = 'proficiency-cell';
-            proficiencyCell.textContent = '0%';
-            proficiencyRow.appendChild(proficiencyCell);
-
-            // Add score cells for students
-            students.forEach((student, studentIndex) => {
-                const scoreCell = createScoreCell(studentIndex, assessmentIndex);
-                gradeTable.querySelector('tbody').rows[studentIndex].appendChild(scoreCell);
-            });
-
-            // Add letter grade cells
-            updateLetterGrades();
-        }
-
-        // Function to add a student
-        function addStudent(studentName) {
-            const studentIndex = students.length;
-            students.push({ name: studentName });
-
-            const row = document.createElement('tr');
-            const nameCell = document.createElement('th');
-            nameCell.textContent = studentName;
-            row.appendChild(nameCell);
-            gradeTable.querySelector('tbody').appendChild(row);
-
-            // Add score cells for existing assessments
-            assessments.forEach((assessment, assessmentIndex) => {
-                const scoreCell = createScoreCell(studentIndex, assessmentIndex);
-                row.appendChild(scoreCell);
-            });
-        }
-
-        // Function to create a score cell
-        function createScoreCell(studentIndex, assessmentIndex) {
-            const scoreCell = document.createElement('td');
-            const select = document.createElement('select');
-            select.className = 'score-select';
-            const scores = ['', 4, 3, 2, 1, 'N'];
-            scores.forEach(score => {
-                const option = document.createElement('option');
-                option.value = score;
-                option.textContent = score;
-                select.appendChild(option);
-            });
-
-            select.addEventListener('change', function() {
-                updateProficiencyPercentages();
-                updateLetterGrades();
-            });
-
-            scoreCell.appendChild(select);
-            return scoreCell;
-        }
-
-        // Function to update letter grades
-        function updateLetterGrades() {
-            students.forEach((student, studentIndex) => {
-                const row = gradeTable.querySelector('tbody').rows[studentIndex];
-                const scores = [...row.querySelectorAll('select')].map(select => select.value);
-                const avg = calculateAverage(scores);
-                const letterGrade = getLetterGrade(avg);
-                letterGradeRow.querySelectorAll('td')[studentIndex].textContent = letterGrade;
-            });
-        }
-
-        // Function to calculate average score
-        function calculateAverage(scores) {
-            const validScores = scores.filter(score => score !== '').map(Number);
-            return validScores.length ? validScores.reduce((a, b) => a + b) / validScores.length : 0;
-        }
-
-        // Function to return letter grade
-        function getLetterGrade(avg) {
-            if (avg >= 3.5) return 'A';
-            if (avg >= 2.5) return 'B';
-            if (avg >= 1.5) return 'C';
-            return 'F';
-        }
-
-        // Function to update proficiency percentages
-        function updateProficiencyPercentages() {
-            assessments.forEach((assessment, assessmentIndex) => {
-                let total = 0;
-                let proficient = 0;
-                students.forEach((student, studentIndex) => {
-                    const score = gradeTable.querySelector('tbody').rows[studentIndex].querySelectorAll('select')[assessmentIndex].value;
-                    if (score !== '') {
-                        total++;
-                        if (score == '4' || score == '3') proficient++;
+function createChart(assessmentIndex) {
+    const ctx = document.getElementById('chart-' + assessmentIndex).getContext('2d');
+    const chart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['4', '3', '2', '1', 'N'],
+            datasets: [{
+                data: [0, 0, 0, 0, 0],
+                backgroundColor: ['#00c5ff', '#00ff04', '#fdff00', '#ff1837', '#ff00a7'],
+            }]
+        },
+        options: {
+            plugins: [ChartDataLabels],
+            responsive: false,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                },
+                tooltip: {
+                    enabled: true,
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.raw;
+                            return label + ': ' + value + '%';
+                        }
                     }
-                });
-                const proficiency = total ? (proficient / total * 100).toFixed(2) + '%' : '0%';
-                proficiencyRow.querySelectorAll('td')[assessmentIndex].textContent = proficiency;
-            });
+                },
+                datalabels: {
+                    formatter: function(value, context) {
+                        return value > 0 ? value + '%' : '';
+                    },
+                    color: '#fff',
+                    font: {
+                        weight: 'bold'
+                    }
+                }
+            }
         }
+    });
+    charts[assessmentIndex] = chart;
+}
 
-        // Initialize the table with sample data
-        initializeTable();
-    </script>
+// Function to update all charts
+function updateCharts() {
+    assessments.forEach((assessment, assessmentIndex) => {
+        const scoreCounts = {'4': 0, '3': 0, '2': 0, '1': 0, 'N': 0};
+        let total = 0;
+        students.forEach((student, studentIndex) => {
+            const select = document.querySelector(`.score-select[data-student-index="${studentIndex}"][data-assessment-index="${assessmentIndex}"]`);
+            const score = select.value;
+            if (score !== '') {
+                scoreCounts[score]++;
+                total++;
+            }
+        });
+
+        // Avoid division by zero
+        const percentages = total > 0 ? [
+            ((scoreCounts['4'] / total) * 100).toFixed(2),
+            ((scoreCounts['3'] / total) * 100).toFixed(2),
+            ((scoreCounts['2'] / total) * 100).toFixed(2),
+            ((scoreCounts['1'] / total) * 100).toFixed(2),
+            ((scoreCounts['N'] / total) * 100).toFixed(2)
+        ] : [0, 0, 0, 0, 0];
+
+        const chart = charts[assessmentIndex];
+        chart.data.datasets[0].data = percentages;
+        chart.update();
+    });
+}
+
+// Initialize the table
+initializeTable();
+// PDF Download functionality
+document.getElementById('downloadBtn').addEventListener('click', function() {
+    // Disable the download button to prevent multiple clicks
+    this.disabled = true;
+    this.textContent = 'Generating PDF...';
+
+    // Wait for charts to render
+    setTimeout(() => {
+        // Capture the entire body
+        html2canvas(document.body, {scale: 2}).then(canvas => {
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF('l', 'mm', 'a4'); // Landscape orientation
+
+            // Calculate the number of pages needed
+            const imgWidth = 297; // A4 width in mm
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+            let position = 0;
+            let heightLeft = imgHeight;
+
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= 210;
+
+            while (heightLeft > 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= 210;
+            }
+
+            pdf.save('FlippedAssignmentSpreadsheet.pdf');
+
+            // Re-enable the download button
+            document.getElementById('downloadBtn').disabled = false;
+            document.getElementById('downloadBtn').textContent = 'Download PDF';
+        });
+    }, 1000); // Adjust the timeout as needed
+});
+</script>
 </body>
 </html>
