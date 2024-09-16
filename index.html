@@ -79,7 +79,10 @@
             white-space: nowrap;
             height: 150px;
         }
-        .sep-averages-cell {
+        .sep-averages-row th {
+            text-align: left;
+        }
+        .sep-average {
             font-weight: bold;
         }
     </style>
@@ -99,16 +102,26 @@
                 <th></th> <!-- Empty corner cell -->
                 <!-- Student names will be added here -->
             </tr>
+        </thead>
+        <tbody>
+            <!-- Letter Grade Row -->
             <tr id="letterGradeRow">
                 <th>Letter Grade</th>
                 <!-- Letter grades will be added here -->
             </tr>
-            <tr id="sepAverageRow">
-                <th>SEP Averages</th>
-                <!-- SEP averages will be added here -->
+            <!-- SEP Averages Rows -->
+            <tr class="sep-averages-row" id="sep2AverageRow">
+                <th>SEP2 Avg</th>
+                <!-- SEP2 averages will be added here -->
             </tr>
-        </thead>
-        <tbody>
+            <tr class="sep-averages-row" id="sep4AverageRow">
+                <th>SEP4 Avg</th>
+                <!-- SEP4 averages will be added here -->
+            </tr>
+            <tr class="sep-averages-row" id="sep6AverageRow">
+                <th>SEP6 Avg</th>
+                <!-- SEP6 averages will be added here -->
+            </tr>
             <!-- Assessment rows will be added here -->
         </tbody>
     </table>
@@ -124,7 +137,9 @@
         const gradeTable = document.getElementById('gradeTable');
         const studentRow = document.getElementById('studentRow');
         const letterGradeRow = document.getElementById('letterGradeRow');
-        const sepAverageRow = document.getElementById('sepAverageRow');
+        const sep2AverageRow = document.getElementById('sep2AverageRow');
+        const sep4AverageRow = document.getElementById('sep4AverageRow');
+        const sep6AverageRow = document.getElementById('sep6AverageRow');
         const tableBody = gradeTable.querySelector('tbody');
         let students = [];
         let assessments = [];
@@ -172,22 +187,34 @@
             letterCell.dataset.studentIndex = studentIndex;
             letterGradeRow.appendChild(letterCell);
 
-            // Add SEP average cell
-            const sepCell = document.createElement('td');
-            sepCell.className = 'sep-averages-cell';
-            sepCell.textContent = 'N/A';
-            sepCell.dataset.studentIndex = studentIndex;
-            sepAverageRow.appendChild(sepCell);
+            // Add SEP average cells
+            const sep2Cell = document.createElement('td');
+            sep2Cell.className = 'sep-average';
+            sep2Cell.textContent = 'N/A';
+            sep2Cell.dataset.studentIndex = studentIndex;
+            sep2AverageRow.appendChild(sep2Cell);
+
+            const sep4Cell = document.createElement('td');
+            sep4Cell.className = 'sep-average';
+            sep4Cell.textContent = 'N/A';
+            sep4Cell.dataset.studentIndex = studentIndex;
+            sep4AverageRow.appendChild(sep4Cell);
+
+            const sep6Cell = document.createElement('td');
+            sep6Cell.className = 'sep-average';
+            sep6Cell.textContent = 'N/A';
+            sep6Cell.dataset.studentIndex = studentIndex;
+            sep6AverageRow.appendChild(sep6Cell);
 
             // Add score cells to existing assessment rows
-            const assessmentRows = tableBody.querySelectorAll('tr');
+            const assessmentRows = tableBody.querySelectorAll('.assessment-row');
             assessmentRows.forEach(row => {
                 const scoreCell = createScoreCell(studentIndex, row.dataset.assessmentIndex);
-                row.insertBefore(scoreCell, row.lastElementChild); // Insert before the chart cell
+                row.insertBefore(scoreCell, row.querySelector('.chart-cell')); // Insert before the chart cell
             });
 
-            calculateLetterGrades();
             calculateSEPAverages();
+            calculateLetterGrades();
         }
 
         // Function to add an assessment
@@ -197,6 +224,7 @@
 
             const row = document.createElement('tr');
             row.dataset.assessmentIndex = assessmentIndex;
+            row.className = 'assessment-row';
 
             // Assessment name cell
             const assessmentCell = document.createElement('td');
@@ -309,36 +337,36 @@
                     }
                 });
 
-                // Calculate average
-                let totalAverage = 0;
-                let count = 0;
-                for (const sep of seps) {
+                // Update SEP averages
+                seps.forEach(sep => {
+                    const sepAverageCell = document.querySelector(`#${sep.toLowerCase()}AverageRow td[data-student-index="${studentIndex}"]`);
                     if (sepCounts[sep] > 0) {
-                        totalAverage += sepSums[sep] / sepCounts[sep];
-                        count++;
+                        const average = (sepSums[sep] / sepCounts[sep]).toFixed(2);
+                        sepAverageCell.textContent = average;
+                        sepAverageCell.dataset.average = average;
+                    } else {
+                        sepAverageCell.textContent = 'N/A';
+                        sepAverageCell.dataset.average = '';
                     }
-                }
-
-                const sepAverageCell = sepAverageRow.querySelector(`td[data-student-index="${studentIndex}"]`);
-                if (count > 0) {
-                    const average = (totalAverage / count).toFixed(2);
-                    sepAverageCell.textContent = average;
-                    sepAverageCell.dataset.average = average;
-                } else {
-                    sepAverageCell.textContent = 'N/A';
-                    sepAverageCell.dataset.average = '';
-                }
+                });
             });
         }
 
         // Function to calculate letter grades
         function calculateLetterGrades() {
             students.forEach((student, studentIndex) => {
-                const sepAverageCell = sepAverageRow.querySelector(`td[data-student-index="${studentIndex}"]`);
-                const avg = sepAverageCell.dataset.average;
+                const sepAverages = [];
+                seps.forEach(sep => {
+                    const sepAverageCell = document.querySelector(`#${sep.toLowerCase()}AverageRow td[data-student-index="${studentIndex}"]`);
+                    const avg = sepAverageCell.dataset.average;
+                    if (avg) {
+                        sepAverages.push(parseFloat(avg));
+                    }
+                });
+
                 const letterGradeCell = letterGradeRow.querySelector(`td[data-student-index="${studentIndex}"]`);
-                if (avg) {
-                    const overallAverage = parseFloat(avg);
+                if (sepAverages.length > 0) {
+                    const overallAverage = sepAverages.reduce((a, b) => a + b, 0) / sepAverages.length;
                     let letterGrade = '';
                     if (overallAverage >= 3.5) {
                         letterGrade = 'A';
